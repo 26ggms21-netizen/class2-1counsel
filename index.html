@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2학기 기말 대비 성적 상담</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 공부 계획표와 같은 흙빛 종이·잉크색 체계. 시험 세 개는 파랑(1학기 중간)·황동(1학기 기말)·벽돌(2학기 중간). */
+:root{
+  color-scheme:light;
+  --paper:#FAF4E8;--card:#FFFDF8;--ink:#37291D;--soft:#6F5E4E;--line:#E4D8C4;--line2:#EFE6D6;
+  --steel:#2D4F6B;--steel-bg:#E0E8EF;--brass-bg:#FAEFD3;--poppy:#B4432C;--poppy-bg:#F8E2DA;--olive:#5E7238;--olive-bg:#E8EDD8;
+  --e1:#4F86C6;--e2:#D08A1E;--e3:#A8352A;--pos:#2D63A0;--neg:#B4432C;
+  --display:"Jua","Noto Sans KR",sans-serif;--body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6;word-break:keep-all;overflow-wrap:break-word}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--steel);outline-offset:2px}
+[hidden]{display:none!important}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.25;margin:0}
+p{margin:0}
+ul{margin:0;padding-left:1.2em;display:grid;gap:5px}
+header.top{position:sticky;top:0;z-index:9;background:var(--ink);color:#F3EADB}
+.topin{max-width:1080px;margin:auto;display:flex;align-items:center;gap:12px;padding:10px 16px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-size:20px;flex:1 1 auto;display:flex;align-items:center;gap:10px}
+.dday{font-family:var(--display);background:var(--poppy);color:#fff;border-radius:8px;padding:1px 9px;font-size:16px}
+nav{display:flex;gap:6px}
+nav button,nav a{background:transparent;border:0;color:#E9DFCF;padding:6px 12px;border-radius:8px;font-size:14px;text-decoration:none}
+nav button[aria-current=page]{background:var(--brass-bg);color:var(--ink)}
+main{max-width:1080px;margin:auto;padding:20px 16px 80px;display:grid;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(16px,3.4vw,28px);display:grid;gap:14px;min-width:0}
+.no{font-size:12px;color:var(--soft);letter-spacing:.08em}
+h1{font-size:clamp(28px,6vw,42px)}
+h2{font-size:clamp(22px,4.4vw,29px)}
+h3{font-size:19px}
+.note{font-size:13px;color:var(--soft)}
+.btn{background:var(--poppy);color:#fff;border:0;border-radius:10px;padding:10px 18px;font-weight:700}
+.btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.steel{background:var(--steel)}
+.btn.sm{padding:6px 12px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+label{font-weight:700;font-size:14px;display:grid;gap:5px}
+label span{font-weight:400;font-size:12px;color:var(--soft)}
+input[type=text],input[type=password],select,textarea{width:100%;background:#fff;border:1.5px solid #CDBEA6;border-radius:9px;padding:9px 12px;font-weight:400;font-size:15px}
+textarea{min-height:110px;resize:vertical;line-height:1.6}
+.g3{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))}
+.g2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.msg{border-radius:10px;padding:10px 14px;font-size:14px;white-space:pre-line}
+.msg.ok{background:var(--olive-bg)}.msg.warn{background:var(--brass-bg)}.msg.bad{background:var(--poppy-bg)}
+.demo{background:var(--steel-bg);border:1px dashed #9DB3C6;border-radius:12px;padding:10px 14px;font-size:13px}
+.who{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.who h2{flex:1 1 auto}
+.badge{font-size:12px;font-weight:700;border-radius:20px;padding:3px 11px;background:var(--line2);color:var(--soft);white-space:nowrap}
+.badge.up{background:var(--olive-bg);color:#46562A}.badge.down{background:var(--poppy-bg);color:#85301E}
+
+/* 요약 타일 */
+.tiles{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}
+.tile{border-radius:14px;padding:12px 14px;background:var(--line2);display:grid;gap:2px;align-content:start}
+.tile small{font-size:12px;color:var(--soft)}
+.tile b{font-family:var(--display);font-weight:400;font-size:30px;line-height:1.15}
+.tile b i{font-style:normal;font-size:15px;color:var(--soft);font-family:var(--body)}
+.tile .sub{font-size:12px;color:var(--soft)}
+.tile.hero{background:var(--steel-bg)}
+.chg{font-weight:700}.chg.up{color:#3E6B2A}.chg.down{color:var(--poppy)}
+
+/* 담임 한마디 */
+.teacher-note{background:#FFF6DA;border:1.5px solid #EAD08A;border-radius:16px;padding:16px 18px;display:grid;gap:8px}
+.teacher-note .t{white-space:pre-line;font-size:16px;line-height:1.75}
+.teacher-note.empty{background:transparent;border-style:dashed;color:var(--soft)}
+
+/* 그래프 */
+.chart{position:relative;min-width:0}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-family:var(--body);fill:var(--soft)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+#tip{position:fixed;z-index:30;pointer-events:none;background:var(--ink);color:#fff;font-size:13px;line-height:1.45;border-radius:8px;padding:7px 10px;max-width:240px;white-space:pre-line;box-shadow:0 4px 14px #0003}
+.toggle{font-size:13px;background:transparent;border:0;color:var(--steel);text-decoration:underline;padding:0;justify-self:start}
+
+/* 표 */
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
+table.t{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+table.t th,table.t td{padding:7px 10px;border-bottom:1px solid var(--line2);text-align:center;white-space:nowrap}
+table.t thead th{background:var(--card);font-size:12px;color:var(--soft);font-weight:700;position:sticky;top:0}
+table.t th[scope=row]{text-align:left}
+table.t tfoot td,table.t tfoot th{background:#FBF6EC;font-weight:700}
+.sdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.zbar{display:inline-flex;align-items:center;gap:6px}
+.zbar .trk{position:relative;width:64px;height:8px;background:var(--line2);border-radius:4px}
+.zbar .trk::before{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:#B9A98F}
+.zbar .fill{position:absolute;top:0;bottom:0;border-radius:4px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{flex:1 1 0;min-width:90px;border:1.5px solid var(--ink);background:var(--card);border-radius:10px;padding:7px 8px;font-weight:700;font-size:14px}
+.tabs button[aria-selected=true]{background:var(--ink);color:#fff}
+
+/* 분석 */
+.ai-tag{display:inline-block;font-size:11px;font-weight:700;background:var(--steel);color:#fff;border-radius:6px;padding:1px 7px;vertical-align:3px;margin-left:6px;font-family:var(--body)}
+.headline{font-size:17px;line-height:1.7;background:var(--steel-bg);border-radius:12px;padding:12px 16px}
+.pts{list-style:none;padding:0;display:grid;gap:6px}
+.pts li{border-radius:10px;padding:8px 12px;font-size:14px;background:var(--line2)}
+.pts li.good{background:var(--olive-bg)}.pts li.bad{background:var(--poppy-bg)}
+.zread{display:grid;gap:8px;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.zread .nums{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px}
+.focus{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}
+.fc{border:1px solid var(--line);border-top:5px solid var(--c);border-radius:12px;padding:14px 16px;display:grid;gap:8px;background:#fff;align-content:start}
+.fc h3{display:flex;align-items:center;gap:8px}
+.fc .rk{font-family:var(--display);color:#fff;background:var(--c);border-radius:50%;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-size:16px}
+.fc .lv{font-size:12px;font-family:var(--body);background:var(--line2);border-radius:20px;padding:1px 9px;color:var(--soft)}
+.fc .basis{font-size:13px;color:var(--soft)}
+.fc ul{font-size:14px}
+.hours{display:grid;gap:6px}
+.hr{display:grid;grid-template-columns:58px 1fr 52px;gap:8px;align-items:center;font-size:14px}
+.hr .b{height:14px;border-radius:0 4px 4px 0;background:var(--c)}
+.hr .v{font-variant-numeric:tabular-nums;color:var(--soft);font-size:13px}
+details{border:1px dashed #BDAA8D;border-radius:10px;padding:9px 14px;font-size:14px}
+summary{cursor:pointer;font-weight:700}
+
+/* 교사 */
+.stats{display:flex;flex-wrap:wrap;gap:10px}
+.stat{flex:1 1 120px;border-radius:14px;padding:12px 16px;background:var(--line2)}
+.stat b{display:block;font-family:var(--display);font-size:30px;font-weight:400;line-height:1.1}
+.stat.up{background:var(--olive-bg)}.stat.down{background:var(--poppy-bg)}.stat.note2{background:var(--brass-bg)}
+table.t.roster tbody tr{cursor:pointer}
+table.t.roster tbody tr:hover{background:#FBF6EC}
+table.t.roster td.nm{text-align:left;font-weight:700}
+table.t.roster th button{background:none;border:0;font:inherit;color:inherit;font-weight:700;padding:0}
+.tags{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
+.tag{font-size:11px;border-radius:20px;padding:1px 8px;background:var(--line2);color:var(--soft);font-weight:700}
+.tag.상승{background:var(--olive-bg);color:#46562A}.tag.하락{background:var(--poppy-bg);color:#85301E}.tag.기초{background:#F3D9D0;color:#85301E}.tag.상위권{background:var(--steel-bg);color:#24425A}.tag.편차{background:var(--brass-bg);color:#6F4E10}
+.tpanel{background:#FFF9EC;border:1.5px solid #EAD08A}
+.private{background:#F1EEE8;border-radius:12px;padding:12px 14px;display:grid;gap:8px}
+.private h3{font-size:16px}
+.prevnext{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.sep{display:flex;align-items:center;gap:10px;color:var(--soft);font-size:13px}
+.sep::before,.sep::after{content:"";flex:1;height:1px;background:var(--line)}
+@media(max-width:600px){
+  .hr{grid-template-columns:50px 1fr 46px}
+  table.t th,table.t td{padding:6px 7px}
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="topin">
+  <div class="brand">2학기 기말 대비 성적 상담 <span class="dday" id="dday"></span></div>
+  <nav id="nav"></nav>
+</div></header>
+<main id="app"></main>
+<div id="tip" hidden></div>
+
+<script>
+/* 서버 주소: 공부 계획표(index.html)와 같은 Apps Script 웹 앱 URL을 넣으세요. 학생 성적은 이 파일에 들어 있지 않고 Apps Script에만 있습니다. */
+const SYNC_URL = "https://script.google.com/macros/s/AKfycbyNGDKpAjoBNQWsxMfOx8ibbY_S-S0ENx5Jrqcgqx1FDSu_Djj3NLWP3Qlx9HvCWNji/exec";
+</script>
+<script>
+const DEMO = null; /*DEMO_DATA*/
+</script>
+<script>
+/* ================= 설정 ================= */
+const CLASS_SIZE = 28;
+const EXAM_DAY = new Date(2026,11,10);
+const SUBC = {'국어':'#C8553D','수학':'#2D63A0','영어':'#B7801C','역사':'#7A4E9A','과학':'#3B8657','도덕':'#B04A78','기가':'#2A7C8A','중국어':'#8A5A2B'};
+const SUBN = s => s==='기가'?'기술·가정':s;
+const EXC = {m1:'#4F86C6',f1:'#D08A1E',m2:'#A8352A'};
+const EXSHAPE = {m1:'circle',f1:'square',m2:'diamond'};
+const LIVE = !!SYNC_URL;
+const PLANNER_URL = './';  // 같은 저장소의 공부 계획표
+
+/* ================= 도구 ================= */
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ls = {get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const fz = z => (z>0?'+':z<0?'−':'')+Math.abs(z).toFixed(2);
+const normName = s => String(s||'').replace(/\s+/g,'');
+const ERR = {
+  wrong_pin:'번호와 비밀번호가 맞지 않아요. 상담 카드를 처음 열 때 정한 4자리 비밀번호를 입력하세요.\n잊어버렸다면 선생님께 비밀번호 초기화를 요청하세요.',
+  name_mismatch:'번호와 이름이 명단과 맞지 않아요. 번호와 이름을 다시 확인하세요.',
+  locked:'비밀번호를 여러 번 틀려서 10분 동안 잠겼어요. 잠시 뒤 다시 시도하세요.',
+  wrong_key:'교사 암호가 맞지 않습니다.', bad_input:'입력값을 다시 확인하세요.',
+  no_data:'성적 자료가 아직 올라와 있지 않아요. 선생님께 알려 주세요.',
+  key_not_set:'apps-script.gs의 TEACHER_KEY를 교사 암호로 바꾼 뒤 새 버전으로 배포하세요.'
+};
+const errText = e => ERR[e] || '서버에 연결하지 못했어요. 인터넷 연결을 확인하고 다시 시도하세요.';
+
+/* ================= 체험 모드 서버 ================= */
+const MOCK = {
+  _c(){return ls.get('counsel-mock',{pins:{},notes:{}})},_p(v){ls.set('counsel-mock',v)},
+  counselLoad(num,name,pin){
+    const st=DEMO&&DEMO.students[num]; if(!st) return {ok:false,error:'no_data'};
+    if(normName(st.name)!==normName(name)) return {ok:false,error:'name_mismatch'};
+    const c=this._c(); if(c.pins[num]&&c.pins[num]!==pin) return {ok:false,error:'wrong_pin'};
+    if(!c.pins[num]){c.pins[num]=pin;this._p(c)}
+    const n=c.notes[num]||{};
+    return {ok:true,meta:DEMO.meta,student:Object.assign({},st,{analysis:Object.assign({},st.analysis,{teacherPoints:undefined,openQ:undefined,draft:undefined}),excelNote:undefined}),comment:n.comment||'',commentAt:n.at||''};
+  },
+  counselTeacherList(key){
+    if(key!=='0000') return {ok:false,error:'wrong_key'};
+    const c=this._c(),notes={};Object.keys(DEMO.students).forEach(k=>{notes[k]=Object.assign({},c.notes[k]||{},{pinSet:!!c.pins[k]})});return {ok:true,meta:DEMO.meta,students:DEMO.students,notes};
+  },
+  counselTeacherSave(key,num,comment,memo){
+    if(key!=='0000') return {ok:false,error:'wrong_key'};
+    const c=this._c(),d=new Date();const at=`${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    c.notes[num]={comment,memo,at};this._p(c);return {ok:true,at};
+  },
+  counselTeacherResetPin(key,num){if(key!=='0000')return {ok:false,error:'wrong_key'};const c=this._c();delete c.pins[num];this._p(c);return {ok:true}}
+};
+async function call(fn,...args){
+  if(LIVE){
+    const c=new AbortController(),t=setTimeout(()=>c.abort(),25000);
+    try{const res=await fetch(SYNC_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:fn,args}),signal:c.signal});return await res.json()}
+    finally{clearTimeout(t)}
+  }
+  if(!DEMO) return {ok:false,error:'no_data'};
+  return new Promise(r=>setTimeout(()=>r(MOCK[fn](...args)),250));
+}
+
+/* ================= 상태 ================= */
+const S = {
+  route:'student', busy:false,
+  login:{num:ls.get('plan-last',{}).num||'',name:ls.get('plan-last',{}).name||'',err:''},
+  me:null, view:null,            // view = {meta, student, comment, commentAt}
+  exam:'m2', showTable:false,
+  T:{key:'',data:null,err:'',busy:false,sel:null,sort:'num',saving:false,msg:'',draft:null}
+};
+
+/* ================= 그래프 ================= */
+function rankChart(meta,st,W){
+  const ids=meta.order.filter(e=>st.exams[e]);
+  const H=Math.round(Math.min(260,Math.max(200,W*.42))), L=46,R=20,T=30,B=48;
+  const nMax=Math.max(...ids.map(e=>meta.exams[e].n));
+  const PX=Math.min(60,W*.08), x=i=>L+PX+(W-L-R-2*PX)*(ids.length===1?.5:i/(ids.length-1));
+  const y=r=>T+(H-T-B)*((r-1)/(nMax-1));
+  let g='';
+  [1,Math.round(nMax*.25),Math.round(nMax*.5),Math.round(nMax*.75),nMax].forEach(r=>{g+=`<line x1="${L}" x2="${W-R}" y1="${y(r)}" y2="${y(r)}" stroke="#EFE6D6"/><text x="${L-8}" y="${y(r)+4}" text-anchor="end" font-size="11">${r}등</text>`});
+  g+=`<text x="${L-8}" y="${T-14}" text-anchor="end" font-size="11">전교</text>`;
+  const pts=ids.map((e,i)=>({e,i,r:st.exams[e].zRank,c:st.exams[e].zRankCls,n:meta.exams[e].n,nc:meta.exams[e].nCls}));
+  g+=`<polyline fill="none" stroke="#2D4F6B" stroke-width="2" points="${pts.map(p=>x(p.i)+','+y(p.r)).join(' ')}"/>`;
+  pts.forEach(p=>{
+    const tip=`${meta.exams[p.e].name}\nz점수 평균 전교 ${p.r}등 / ${p.n}명\n반 ${p.c}등 / ${p.nc}명`;
+    g+=`<circle cx="${x(p.i)}" cy="${y(p.r)}" r="6" fill="#2D4F6B" stroke="#FFFDF8" stroke-width="2"/>`;
+    g+=`<text x="${x(p.i)}" y="${y(p.r)-12}" text-anchor="middle" font-size="13" font-weight="700" style="fill:#37291D">${p.r}등</text>`;
+    g+=`<text x="${x(p.i)}" y="${H-26}" text-anchor="middle" font-size="12" style="fill:#37291D">${meta.exams[p.e].name}</text><text x="${x(p.i)}" y="${H-10}" text-anchor="middle" font-size="11">반 ${p.c}등</text>`;
+    g+=`<rect x="${x(p.i)-36}" y="${T-20}" width="72" height="${H-T-B+28}" fill="transparent" data-tip="${esc(tip)}"/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="시험별 z점수 평균 전교 석차: ${pts.map(p=>meta.exams[p.e].name+' '+p.r+'등').join(', ')}">${g}</svg>`;
+}
+function shape(kind,cx,cy,c,tip){
+  const a=`fill="${c}" stroke="#FFFDF8" stroke-width="2" data-tip="${esc(tip)}"`;
+  if(kind==='circle') return `<circle cx="${cx}" cy="${cy}" r="5.5" ${a}/>`;
+  if(kind==='square') return `<rect x="${cx-5}" y="${cy-5}" width="10" height="10" rx="1.5" ${a}/>`;
+  return `<path d="M${cx} ${cy-7}L${cx+7} ${cy}L${cx} ${cy+7}L${cx-7} ${cy}Z" ${a}/>`;
+}
+function zChart(meta,st,W){
+  const subs=meta.subjects, ids=meta.order.filter(e=>st.exams[e]);
+  const all=[];ids.forEach(e=>Object.values(st.exams[e].subj).forEach(v=>all.push(v.z)));
+  const lo=Math.min(-1.5,Math.floor(Math.min(...all)*2)/2), hi=Math.max(1.5,Math.ceil(Math.max(...all)*2)/2);
+  const H=Math.round(Math.min(300,Math.max(230,W*.46))), L=40,R=10,T=14,B=34;
+  const bw=(W-L-R)/subs.length, x=i=>L+bw*(i+.5), y=z=>T+(H-T-B)*((hi-z)/(hi-lo));
+  const off=Math.min(13,bw*.2);
+  let g='';
+  for(let z=Math.ceil(lo);z<=Math.floor(hi);z++){g+=`<line x1="${L}" x2="${W-R}" y1="${y(z)}" y2="${y(z)}" stroke="${z===0?'#B9A98F':'#EFE6D6'}" ${z===0?'stroke-width="1.5"':''}/><text x="${L-6}" y="${y(z)+4}" text-anchor="end" font-size="11">${z>0?'+'+z:z}</text>`}
+  g+=`<text x="${W-R}" y="${y(0)-5}" text-anchor="end" font-size="11">학년 평균(0)</text>`;
+  subs.forEach((s,i)=>{
+    const vals=ids.map((e,j)=>{const v=st.exams[e].subj[s];return v?{e,j,v}:null}).filter(Boolean);
+    if(vals.length>1) g+=`<polyline fill="none" stroke="#CDBEA6" stroke-width="1.5" points="${vals.map(o=>(x(i)+(o.j-1)*off)+','+y(o.v.z)).join(' ')}"/>`;
+    vals.forEach(o=>{const ex=meta.exams[o.e];g+=shape(EXSHAPE[o.e],x(i)+(o.j-1)*off,y(o.v.z),EXC[o.e],`${SUBN(s)} · ${ex.name}\n${o.v.raw}점 (학년 평균 ${ex.mean[s]}점)\nz ${fz(o.v.z)} · 전교 ${o.v.rank}등 / ${ex.n}명`)});
+    g+=`<text x="${x(i)}" y="${H-12}" text-anchor="middle" font-size="12" style="fill:#37291D">${s}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="과목별 z점수 변화 그래프. 표로 보기에서 같은 값을 볼 수 있어요.">${g}</svg>`;
+}
+const LEG = meta=>`<div class="legend">${meta.order.map(e=>`<span><svg width="16" height="16" aria-hidden="true">${shape(EXSHAPE[e],8,8,EXC[e],'').replace(/ data-tip="[^"]*"/,'')}</svg>${meta.exams[e].name}</span>`).join('')}</div>`;
+function drawCharts(){
+  document.querySelectorAll('[data-chart]').forEach(el=>{
+    const W=Math.max(300,Math.round(el.clientWidth));const ctx=el._ctx;if(!ctx)return;
+    el.innerHTML = el.dataset.chart==='rank'?rankChart(ctx.meta,ctx.st,W):zChart(ctx.meta,ctx.st,W);
+  });
+}
+let rto;addEventListener('resize',()=>{clearTimeout(rto);rto=setTimeout(drawCharts,150)});
+const tip=$('#tip');
+document.addEventListener('pointerover',e=>{const t=e.target.closest('[data-tip]');if(!t||!t.dataset.tip){tip.hidden=true;return}tip.textContent=t.dataset.tip;tip.hidden=false});
+document.addEventListener('pointermove',e=>{if(tip.hidden)return;const w=tip.offsetWidth,h=tip.offsetHeight;let X=e.clientX+14,Y=e.clientY+14;if(X+w>innerWidth-8)X=e.clientX-w-14;if(Y+h>innerHeight-8)Y=e.clientY-h-14;tip.style.left=X+'px';tip.style.top=Y+'px'});
+document.addEventListener('pointerout',e=>{if(e.target.closest('[data-tip]'))tip.hidden=true});
+
+/* ================= 학생 화면(교사 미리보기와 공용) ================= */
+function zcell(z){const w=Math.min(1,Math.abs(z)/2.5)*50;return `<span class="zbar"><span class="trk"><span class="fill" style="${z>=0?`left:50%;width:${w}%;background:var(--pos)`:`right:50%;width:${w}%;background:var(--neg)`}"></span></span>${fz(z)}</span>`}
+function examTable(meta,st,e){
+  const ex=meta.exams[e], d=st.exams[e];
+  if(!d) return '<p class="note">이 시험 성적이 없어요.</p>';
+  const rows=ex.subj.map(s=>{const v=d.subj[s];return `<tr><th scope="row"><span class="sdot" style="background:${SUBC[s]}"></span>${SUBN(s)}</th><td><b>${v.raw}</b></td><td>${ex.mean[s]}</td><td>${ex.meanCls[s]}</td><td>${zcell(v.z)}</td><td>${v.rank} / ${ex.n}</td><td>${v.rankCls} / ${ex.nCls}</td></tr>`}).join('');
+  return `<div class="tblwrap"><table class="t"><thead><tr><th scope="col">과목</th><th scope="col">원점수</th><th scope="col">학년 평균</th><th scope="col">반 평균</th><th scope="col">z점수</th><th scope="col">전교 석차</th><th scope="col">반 석차</th></tr></thead>
+  <tbody>${rows}</tbody>
+  <tfoot><tr><th scope="row">원점수 평균</th><td>${d.avgRaw}</td><td>${ex.avgMean}</td><td>${ex.avgMeanCls}</td><td></td><td>${d.rawRank} / ${ex.n}</td><td>${d.rawRankCls} / ${ex.nCls}</td></tr>
+  <tr><th scope="row">z점수 평균</th><td></td><td></td><td></td><td>${zcell(d.avgZ)}</td><td>${d.zRank} / ${ex.n}</td><td>${d.zRankCls} / ${ex.nCls}</td></tr></tfoot></table></div>
+  <p class="note">과목 하나 안에서는 원점수 석차와 z점수 석차가 같아요(점수 순서가 그대로이기 때문). 여러 과목을 합친 <b>평균</b>에서는 과목마다 난이도가 달라서 원점수 평균 석차와 z점수 평균 석차가 달라질 수 있어요.</p>`;
+}
+function zTable(meta,st){
+  const ids=meta.order;
+  return `<div class="tblwrap"><table class="t"><thead><tr><th scope="col">과목</th>${ids.map(e=>`<th scope="col">${meta.exams[e].name}</th>`).join('')}</tr></thead><tbody>${meta.subjects.map(s=>`<tr><th scope="row">${SUBN(s)}</th>${ids.map(e=>{const v=st.exams[e]&&st.exams[e].subj[s];return `<td>${v?`${v.raw}점 · z ${fz(v.z)}`:'—'}</td>`}).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+function reportHTML(v,forTeacher){
+  const {meta,student:st}=v, A=st.analysis||{};
+  const m2=st.exams.m2, f1=st.exams.f1, ex2=meta.exams.m2;
+  const d = f1&&m2 ? f1.zRank-m2.zRank : 0;
+  const chg = d>0?`<span class="chg up">▲ ${d}계단</span>`:d<0?`<span class="chg down">▼ ${-d}계단</span>`:'<span class="chg">변화 없음</span>';
+  const comment = (v.comment||'').trim();
+  const maxH=Math.max(...Object.values(A.hours||{1:1}));
+  return `
+  <section class="card">
+    <div class="who"><h2>${esc(st.num)}번 ${esc(st.name)}의 성적 상담 카드</h2>${!forTeacher?'<button class="btn alt sm" data-act="logout">나가기</button>':''}</div>
+    <div class="tiles">
+      <div class="tile hero"><small>2학기 중간 · z점수 평균 전교</small><b>${m2.zRank}<i>등 / ${ex2.n}명</i></b><span class="sub">1학기 기말 ${f1?f1.zRank+'등':'—'} → ${chg}</span></div>
+      <div class="tile"><small>반 석차 (z점수 평균)</small><b>${m2.zRankCls}<i>등 / ${ex2.nCls}명</i></b><span class="sub">1학기 기말 반 ${f1?f1.zRankCls+'등':'—'}</span></div>
+      <div class="tile"><small>원점수 평균</small><b>${m2.avgRaw}<i>점</i></b><span class="sub">전교 ${m2.rawRank}등 · 반 ${m2.rawRankCls}등</span></div>
+      <div class="tile"><small>z점수 평균</small><b>${fz(m2.avgZ)}</b><span class="sub">0이면 학년 평균, +면 평균 위</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="no">TEACHER'S NOTE</div>
+    <h3>담임 선생님의 한마디</h3>
+    ${comment?`<div class="teacher-note"><div class="t">${esc(comment)}</div>${v.commentAt?`<div class="note">${esc(v.commentAt)}</div>`:''}</div>`:`<div class="teacher-note empty">${forTeacher?'아직 작성하지 않았어요. 위 칸에 쓰고 저장하면 학생 화면의 이 자리에 보입니다.':'선생님이 곧 한마디를 남겨 주실 거예요.'}</div>`}
+  </section>
+
+  <section class="card">
+    <div class="no">MY POSITION · 시험별 위치 변화</div>
+    <h3>z점수 평균 전교 석차의 변화</h3>
+    <p class="note">위로 갈수록 높은 등수예요. 점을 누르거나 올려 보면 자세한 숫자가 나와요.</p>
+    <div class="chart" data-chart="rank" id="ch-rank"></div>
+  </section>
+
+  <section class="card">
+    <div class="no">BY SUBJECT · 과목별 z점수</div>
+    <h3>과목별로 학년 평균보다 얼마나 위·아래에 있을까?</h3>
+    ${LEG(meta)}
+    <div class="chart" data-chart="z" id="ch-z"></div>
+    <button class="toggle" data-act="ztable">${S.showTable?'표 닫기':'같은 내용을 표로 보기'}</button>
+    ${S.showTable?zTable(meta,st):''}
+    <p class="note">도덕·기술가정·중국어는 1학기 기말고사에만 시험을 봐서 점이 하나예요.</p>
+  </section>
+
+  <section class="card">
+    <div class="no">REPORT · 시험별 성적표</div>
+    <div class="tabs" role="tablist">${meta.order.map(e=>`<button role="tab" data-exam="${e}" aria-selected="${S.exam===e}">${meta.exams[e].name}</button>`).join('')}</div>
+    ${examTable(meta,st,S.exam)}
+  </section>
+
+  ${A.headline?`<section class="card">
+    <div class="no">ANALYSIS · 기말고사 대비 분석</div>
+    <h2>기말고사까지 이렇게 해 보자 <span class="ai-tag">AI 분석</span></h2>
+    <p class="headline">${esc(A.headline)}</p>
+    <div class="g2">
+      <div style="display:grid;gap:8px"><h3>강점과 보완할 점</h3><ul class="pts">${A.sw.map(p=>`<li class="${p.k}">${esc(p.t)}</li>`).join('')}</ul></div>
+      ${A.flow&&A.flow.length?`<div style="display:grid;gap:8px"><h3>1학기 기말 → 2학기 중간, 크게 달라진 과목</h3><ul class="pts">${A.flow.map(p=>`<li class="${p.k}">${esc(p.t)}</li>`).join('')}</ul></div>`:`<div style="display:grid;gap:8px"><h3>1학기 기말 → 2학기 중간</h3><ul class="pts"><li>과목별 z점수가 크게(±0.35 이상) 달라진 과목은 없어요. 고르게 유지하고 있어요.</li></ul></div>`}
+    </div>
+    ${A.zread?`<div class="zread"><h3>원점수와 z점수로 본 변화 <span class="note">(국어·역사·수학·과학·영어 5과목 기준)</span></h3>
+      <div class="nums"><span>원점수 평균 <b>${A.zread.raw1}</b> → <b>${A.zread.raw2}</b>점</span><span>z점수 평균 <b>${fz(A.zread.z1)}</b> → <b>${fz(A.zread.z2)}</b></span></div>
+      <p>${esc(A.zread.t)}</p></div>`:''}
+    <h3>기말고사 집중 과목 TOP 3</h3>
+    <div class="focus">${A.focus.map((f,i)=>`<article class="fc" style="--c:${SUBC[f.s]}"><h3><span class="rk">${i+1}</span>${SUBN(f.s)} <span class="lv">${f.level} 단계 전략</span></h3>
+      <p class="basis">${esc(f.basis)}</p><p><b>왜?</b> ${esc(f.why)}</p><ul>${f.how.map(h=>`<li>${esc(h)}</li>`).join('')}</ul></article>`).join('')}</div>
+    <div style="display:grid;gap:8px"><h3>3주 공부 시간 나누기 <span class="note">(일주일에 21시간 공부한다면)</span></h3>
+      <div class="hours">${Object.entries(A.hours).sort((a,b)=>b[1]-a[1]).map(([s,h])=>`<div class="hr" style="--c:${SUBC[s]}"><span>${SUBN(s)}</span><span class="b" style="width:${h/maxH*100}%"></span><span class="v">${h}시간</span></div>`).join('')}</div>
+      <p class="note">공부 계획표에서 과목별 시간을 이 비율에 맞춰 보자. 평일 3시간, 주말 하루 3시간 정도면 일주일 21시간이에요.${!forTeacher?` <a href="${PLANNER_URL}">공부 계획표 열기 →</a>`:''}</p></div>
+    <div style="display:grid;gap:8px"><h3>공부 습관 조언</h3><ul>${A.habits.map(h=>`<li>${esc(h)}</li>`).join('')}</ul></div>
+    <div class="msg warn">1학기처럼 기말고사에는 <b>도덕·기술가정·중국어</b>도 시험을 봐요. 이 과목들은 중간고사 없이 기말 한 번으로 결정되니 시험 2주 전부터 꾸준히 외우자. 정확한 시험 과목과 범위는 학교 공지를 확인하세요.</div>
+    <p class="note">이 분석은 시험 점수와 석차만 보고 AI가 만든 것이에요. 나의 공부 습관과 사정은 담임 선생님과 이야기하며 함께 맞춰 가요.</p>
+  </section>`:''}
+
+  <details><summary>z점수가 뭐예요?</summary><div style="display:grid;gap:6px;margin-top:8px">
+    <p>z점수는 <b>내 점수가 학년 평균에서 얼마나 떨어져 있는지</b>를 나타내요. 0이면 학년 평균, +1이면 평균보다 꽤 높은 편, −1이면 평균보다 꽤 낮은 편이에요.</p>
+    <p>시험이 쉬웠는지 어려웠는지에 상관없이 학년 안에서의 위치를 공정하게 비교할 수 있어요.</p>
+    <ul><li>점수는 떨어졌는데 z점수가 올랐다면: 어려운 시험에서 잘 버텨 위치가 올라간 거예요.</li><li>점수는 비슷한데 z점수가 내려갔다면: 시험이 쉬워져 다른 친구들은 올랐는데 나는 제자리였다는 뜻이에요.</li></ul>
+  </div></details>`;
+}
+function attachCharts(v){
+  const a=$('#ch-rank'),b=$('#ch-z');
+  if(a){a._ctx={meta:v.meta,st:v.student}} if(b){b._ctx={meta:v.meta,st:v.student}}
+  drawCharts();
+}
+
+/* ================= 학생: 로그인 ================= */
+function loginHTML(){
+  const L=S.login;
+  return `<section class="card">
+    <div class="no">STEP 1 · 내 성적 상담 카드 열기</div>
+    <h1>나의 성적, 나의 기말 전략</h1>
+    <p>1학기 중간고사부터 2학기 중간고사까지 내 성적과 석차가 어떻게 바뀌었는지 보고, 기말고사에서 무엇에 집중할지 확인해 보자. 담임 선생님의 한마디도 여기서 볼 수 있다.</p>
+    ${LIVE?'':DEMO?'<div class="demo"><b>미리보기(체험) 모드</b> · 가상의 학생 자료로 움직입니다. 실제 성적은 이 파일이 아니라 Apps Script에만 들어 있습니다. 체험: 학생 탭에서 아무 번호와 아래 명단의 이름, 새 4자리 숫자 / 교사 탭 암호 0000</div>':'<div class="msg warn">아직 서버 주소(SYNC_URL)가 연결되지 않았어요.</div>'}
+    ${!LIVE&&DEMO?`<p class="note">체험용 가상 명단: ${Object.values(DEMO.students).slice(0,6).map(s=>`${s.num}번 ${esc(s.name)}`).join(', ')} …</p>`:''}
+    <form id="loginf" class="g3" autocomplete="off">
+      <label for="lnum">번호<select id="lnum" required><option value="">번호 선택</option>${Array.from({length:CLASS_SIZE},(_,i)=>`<option value="${i+1}" ${String(L.num)===String(i+1)?'selected':''}>${i+1}번</option>`).join('')}</select></label>
+      <label for="lname">이름<input type="text" id="lname" maxlength="10" required value="${esc(L.name)}"></label>
+      <label for="lpin">비밀번호 <span>숫자 4자리</span><input type="password" id="lpin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required autocomplete="off"></label>
+      <div class="btns" style="grid-column:1/-1"><button class="btn" type="submit" ${S.busy?'disabled':''}>${S.busy?'여는 중…':'내 상담 카드 열기'}</button></div>
+    </form>
+    ${L.err?`<div class="msg bad" role="alert">${esc(L.err)}</div>`:''}
+    <p class="note">처음 여는 사람은 지금 입력한 4자리 숫자가 <b>내 상담 카드의 비밀번호</b>가 된다. 공부 계획표 비밀번호와 같지 않아도 된다. 다음에 볼 때 같은 번호·이름·비밀번호를 넣자. 내 성적은 나와 담임 선생님만 볼 수 있다.</p>
+  </section>`;
+}
+async function doLogin(e){
+  e.preventDefault();
+  const num=+$('#lnum').value,name=$('#lname').value.trim(),pin=$('#lpin').value.trim();
+  S.login.num=num;S.login.name=name;
+  if(!num||!name){S.login.err='번호와 이름을 입력하세요.';return render()}
+  if(!/^\d{4}$/.test(pin)){S.login.err='비밀번호는 숫자 4자리로 입력하세요.';return render()}
+  S.busy=true;S.login.err='';render();
+  try{
+    const r=await call('counselLoad',num,name,pin);
+    if(!r||!r.ok){S.login.err=errText(r&&r.error)}
+    else{ls.set('plan-last',{num,name});S.me={num,name};S.view={meta:r.meta,student:r.student,comment:r.comment,commentAt:r.commentAt};S.exam='m2';S.showTable=false}
+  }catch(err){S.login.err=errText()}
+  S.busy=false;render();window.scrollTo(0,0);
+}
+
+/* ================= 교사 화면 ================= */
+function teacherHTML(){
+  const T=S.T;
+  const head=`<section class="card"><div class="no">TEACHER · 담임 교사용</div><h2>우리 반 성적 상담 현황</h2>
+    ${LIVE?'<p>Apps Script에 넣어 둔 성적 자료와 상담 기록을 불러옵니다.</p>':'<div class="demo"><b>미리보기(체험) 모드</b> · 가상의 학생 자료입니다. 체험 암호: 0000</div>'}
+    <form id="tform" class="btns" autocomplete="off"><label for="tkey" style="flex:1 1 200px">교사 암호<input type="password" id="tkey" value="${esc(T.key)}" autocomplete="current-password"></label>
+    <button class="btn" type="submit" style="align-self:end" ${T.busy?'disabled':''}>${T.busy?'불러오는 중…':T.data?'새로고침':'상담 현황 열기'}</button></form>
+    ${T.err?`<div class="msg bad" role="alert">${esc(T.err)}</div>`:''}</section>`;
+  if(!T.data) return head;
+  if(T.sel) return teacherDetailHTML();
+  const {meta,students,notes}=T.data;
+  const list=Object.values(students).filter(s=>s.exams&&s.exams.m2);
+  const ch=s=>s.exams.f1?s.exams.f1.zRank-s.exams.m2.zRank:0;
+  const up=list.filter(s=>ch(s)>=10).length, down=list.filter(s=>ch(s)<=-10).length, written=list.filter(s=>notes[s.num]&&notes[s.num].comment).length, opened=list.filter(s=>notes[s.num]&&notes[s.num].pinSet).length;
+  const sorters={num:(a,b)=>a.num-b.num,rank:(a,b)=>a.exams.m2.zRank-b.exams.m2.zRank,chg:(a,b)=>ch(b)-ch(a),chgd:(a,b)=>ch(a)-ch(b)};
+  list.sort(sorters[T.sort]||sorters.num);
+  const rk=(s,e)=>s.exams[e]?s.exams[e].zRank:'—';
+  const sortBtn=(k,l)=>`<button data-sort="${k}" aria-pressed="${T.sort===k}">${l}${T.sort===k?' ▾':''}</button>`;
+  return head+`<section class="card">
+    <div class="stats"><div class="stat"><b>${list.length}</b>성적 자료</div><div class="stat up"><b>${up}</b>10계단 이상 상승</div><div class="stat down"><b>${down}</b>10계단 이상 하락</div><div class="stat note2"><b>${written}</b>한마디 작성 완료</div><div class="stat"><b>${opened}</b>상담 카드 확인한 학생</div></div>
+    <p class="note">석차는 모두 z점수 평균 전교 석차입니다. 변화는 1학기 기말 → 2학기 중간 비교(+는 상승). 학생 줄을 누르면 성적·분석과 상담 기록 칸이 열립니다.</p>
+    <div class="tblwrap"><table class="t roster"><thead><tr>
+      <th scope="col">${sortBtn('num','번호')}</th><th scope="col">이름</th><th scope="col">1학기 중간</th><th scope="col">1학기 기말</th><th scope="col">${sortBtn('rank','2학기 중간')}</th><th scope="col">반</th><th scope="col">${sortBtn('chg','변화')}</th><th scope="col">원점수 평균</th><th scope="col">유형</th><th scope="col">기말 집중 과목</th><th scope="col">한마디</th></tr></thead>
+      <tbody>${list.map(s=>{const c=ch(s),A=s.analysis||{};return `<tr data-stu="${s.num}" tabindex="0"><td>${s.num}</td><td class="nm">${esc(s.name)}</td><td>${rk(s,'m1')}</td><td>${rk(s,'f1')}</td><td><b>${rk(s,'m2')}</b></td><td>${s.exams.m2.zRankCls}</td><td>${c>0?`<span class="chg up">▲${c}</span>`:c<0?`<span class="chg down">▼${-c}</span>`:'–'}</td><td>${s.exams.m2.avgRaw}</td><td><div class="tags">${(A.types||[]).filter(t=>t!=='중위권').map(t=>`<span class="tag ${t}">${t}</span>`).join('')}</div></td><td>${(A.focus||[]).map(f=>f.s).join(' · ')}</td><td>${notes[s.num]&&notes[s.num].comment?'✓':'<span class="note">—</span>'}</td></tr>`}).join('')}</tbody></table></div>
+    <div class="btns"><span class="note">정렬:</span>${['num:번호순','rank:현재 석차순','chg:많이 오른 순','chgd:많이 내린 순'].map(x=>{const [k,l]=x.split(':');return `<button class="btn ${T.sort===k?'steel':'alt'} sm" data-sort="${k}">${l}</button>`}).join('')}</div>
+  </section>`;
+}
+function teacherDetailHTML(){
+  const T=S.T,{meta,students,notes}=T.data,st=students[T.sel],n=notes[T.sel]||{},A=st.analysis||{};
+  const nums=Object.keys(students).map(Number).sort((a,b)=>a-b),i=nums.indexOf(T.sel);
+  const draft = T.draft || {comment:n.comment||'',memo:n.memo||''};
+  return `<div class="prevnext"><button class="btn alt sm" data-act="tback">← 전체 학생 목록</button><div class="btns">${i>0?`<button class="btn alt sm" data-stu="${nums[i-1]}">← ${nums[i-1]}번</button>`:''}${i<nums.length-1?`<button class="btn alt sm" data-stu="${nums[i+1]}">${nums[i+1]}번 →</button>`:''}</div></div>
+  <section class="card tpanel">
+    <div class="no">TEACHER ONLY · 학생에게는 보이지 않는 칸 포함</div>
+    <h2>${st.num}번 ${esc(st.name)} 상담 기록</h2>
+    <div class="g2">
+      <div class="private"><h3>AI가 제안하는 담임 상담 포인트 <span class="ai-tag">AI</span></h3><ul>${(A.teacherPoints||[]).map(p=>`<li>${esc(p)}</li>`).join('')}</ul>
+        ${A.openQ?`<p><b>상담 첫 질문 예시:</b> “${esc(A.openQ)}”</p>`:''}
+        ${st.excelNote?`<details><summary>엑셀 파일에 있던 기존 메모</summary><p style="margin-top:6px">${esc(st.excelNote)}</p></details>`:''}</div>
+      <div style="display:grid;gap:10px">
+        <label for="tc">학생에게 보여 줄 담임 한마디 <span>학생 상담 카드에 그대로 보입니다</span><textarea id="tc" maxlength="1000">${esc(draft.comment)}</textarea></label>
+        <div class="btns"><button class="btn alt sm" data-act="usedraft">AI 초안 넣기</button><span class="note">초안을 넣은 뒤 선생님 말투로 고쳐 주세요.</span></div>
+        <label for="tm">비공개 메모 <span>선생님만 봅니다 (상담 내용, 보호자 연락 등)</span><textarea id="tm" maxlength="2000" style="min-height:80px">${esc(draft.memo)}</textarea></label>
+        <div class="btns"><button class="btn" data-act="tsave" ${T.saving?'disabled':''}>${T.saving?'저장하는 중…':'저장하기'}</button>${n.at?`<span class="note">마지막 저장 ${esc(n.at)}</span>`:''}</div>
+        <div class="btns"><span class="note">상담 카드 비밀번호: ${n.pinSet?'학생이 정함':'아직 안 정함 (카드를 열어 보지 않음)'}</span>${n.pinSet?(T.resetAsk?`<button class="btn alt sm" data-act="resetno">취소</button><button class="btn sm" data-act="resetyes">비밀번호 초기화</button>`:'<button class="btn alt sm" data-act="resetask">비밀번호 초기화</button>'):''}</div>
+        ${T.resetAsk?'<p class="note">초기화하면 학생이 다음에 입력하는 4자리가 새 상담 카드 비밀번호가 됩니다. 성적과 한마디는 그대로입니다.</p>':''}
+        ${T.msg?`<div class="msg ${T.msg.k}" role="status">${esc(T.msg.t)}</div>`:''}
+      </div>
+    </div>
+  </section>
+  <div class="sep">아래는 학생에게 보이는 화면입니다</div>
+  ${reportHTML({meta,student:st,comment:draft.comment,commentAt:n.at},true)}`;
+}
+async function loadTeacher(){
+  const T=S.T,k=$('#tkey');if(k)T.key=k.value.trim();
+  if(!T.key){T.err='교사 암호를 입력하세요.';return render()}
+  T.busy=true;T.err='';render();
+  try{const r=await call('counselTeacherList',T.key);if(r&&r.ok){T.data={meta:r.meta,students:r.students,notes:r.notes||{}}}else{T.data=null;T.err=errText(r&&r.error)}}
+  catch(e){T.err=errText()}
+  T.busy=false;render();
+}
+function keepDraft(){const c=$('#tc'),m=$('#tm');if(c&&m)S.T.draft={comment:c.value,memo:m.value}}
+async function saveNote(){
+  const T=S.T;keepDraft();T.saving=true;T.msg='';render();
+  try{
+    const r=await call('counselTeacherSave',T.key,T.sel,T.draft.comment.trim(),T.draft.memo.trim());
+    if(r&&r.ok){T.data.notes[T.sel]=Object.assign({},T.data.notes[T.sel],{comment:T.draft.comment.trim(),memo:T.draft.memo.trim(),at:r.at});T.msg={k:'ok',t:'저장했습니다. 학생 상담 카드에 바로 보입니다.'};T.draft=null}
+    else T.msg={k:'bad',t:errText(r&&r.error)};
+  }catch(e){T.msg={k:'bad',t:'저장하지 못했습니다. 쓴 내용은 그대로 있으니 다시 눌러 주세요.'}}
+  T.saving=false;render();
+}
+
+/* ================= 렌더 ================= */
+function render(){
+  const t=new Date(),dd=Math.ceil((EXAM_DAY-new Date(t.getFullYear(),t.getMonth(),t.getDate()))/864e5);
+  $('#dday').textContent=dd>0?`D-${dd}`:dd===0?'D-day':'시험 끝';
+  $('#nav').innerHTML=[['student','학생'],['teacher','선생님']].map(([r,l])=>`<button data-route="${r}" ${S.route===r?'aria-current="page"':''}>${l}</button>`).join('')+`<a href="${PLANNER_URL}">공부 계획표</a>`;
+  let h,v=null;
+  if(S.route==='student'){ if(S.me&&S.view){h=reportHTML(S.view,false);v=S.view} else h=loginHTML(); }
+  else{ h=teacherHTML(); if(S.T.data&&S.T.sel){const d=S.T.data;v={meta:d.meta,student:d.students[S.T.sel]}} }
+  $('#app').innerHTML=h;
+  if(v) attachCharts(v);
+  const lf=$('#loginf');if(lf)lf.onsubmit=doLogin;
+  const tf=$('#tform');if(tf)tf.onsubmit=e=>{e.preventDefault();loadTeacher()};
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button,tr[data-stu]');if(!b)return;const d=b.dataset;
+  if(d.route){S.route=d.route;render();window.scrollTo(0,0);return}
+  if(d.exam){keepDraft();S.exam=d.exam;render();return}
+  if(d.sort){S.T.sort=d.sort;render();return}
+  if(d.stu){S.T.sel=+d.stu;S.T.draft=null;S.T.msg='';S.T.resetAsk=false;S.exam='m2';S.showTable=false;render();window.scrollTo(0,0);return}
+  switch(d.act){
+    case 'logout':S.me=null;S.view=null;render();break;
+    case 'ztable':keepDraft();S.showTable=!S.showTable;render();break;
+    case 'tback':S.T.sel=null;S.T.draft=null;render();break;
+    case 'usedraft':{keepDraft();const A=S.T.data.students[S.T.sel].analysis||{};S.T.draft.comment=A.draft||'';render();const c=$('#tc');c&&c.focus();break}
+    case 'tsave':saveNote();break;
+    case 'resetask':keepDraft();S.T.resetAsk=true;render();break;
+    case 'resetno':keepDraft();S.T.resetAsk=false;render();break;
+    case 'resetyes':keepDraft();(async()=>{const r=await call('counselTeacherResetPin',S.T.key,S.T.sel).catch(()=>null);S.T.resetAsk=false;if(r&&r.ok){S.T.data.notes[S.T.sel]=Object.assign({},S.T.data.notes[S.T.sel],{pinSet:false});S.T.msg={k:'ok',t:'상담 카드 비밀번호를 초기화했습니다.'}}else S.T.msg={k:'bad',t:errText(r&&r.error)};render()})();break;
+  }
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'){const r=e.target.closest&&e.target.closest('tr[data-stu]');if(r){r.click()}}});
+render();
+</script>
+</body>
+</html>
